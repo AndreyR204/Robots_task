@@ -116,55 +116,28 @@ public class MainApplicationFrame extends JFrame
     {
         JMenuBar menuBar = new JMenuBar();
 
+        JMenu lookAndFeelMenu = createMenu("Режим отображения",KeyEvent.VK_V,"Управление режимом отображения приложения");
+
+        lookAndFeelMenu.add(createSubmenu("Системная схема", KeyEvent.VK_S, (event) -> {
+        setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        this.invalidate();
+        }));
+
+        lookAndFeelMenu.add(createSubmenu("Универсальная схема", KeyEvent.VK_S,(event) -> {
+            setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+            this.invalidate();
+        }));
+
+        JMenu testMenu = createMenu("Тесты",KeyEvent.VK_T,"Тестовые команды");
+        testMenu.add(createSubmenu("Сообщение в лог", KeyEvent.VK_S,(event) -> {
+            Logger.debug("Новая строка");
+        }));
         
-        JMenu lookAndFeelMenu = new JMenu("Режим отображения");
-        lookAndFeelMenu.setMnemonic(KeyEvent.VK_V);
-        lookAndFeelMenu.getAccessibleContext().setAccessibleDescription(
-                "Управление режимом отображения приложения");
-        
-        {
-            JMenuItem systemLookAndFeel = new JMenuItem("Системная схема", KeyEvent.VK_S);
-            systemLookAndFeel.addActionListener((event) -> {
-                setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                this.invalidate();
-            });
-            lookAndFeelMenu.add(systemLookAndFeel);
-        }
+        JMenu exitMenu = createMenu("Выход", KeyEvent.VK_Q, "Выход");
+        exitMenu.add(createSubmenu("Выход", KeyEvent.VK_Q, (event) -> {
+            exitApplication();
+        }));
 
-        {
-            JMenuItem crossplatformLookAndFeel = new JMenuItem("Универсальная схема", KeyEvent.VK_S);
-            crossplatformLookAndFeel.addActionListener((event) -> {
-                setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-                this.invalidate();
-            });
-            lookAndFeelMenu.add(crossplatformLookAndFeel);
-        }
-
-        JMenu testMenu = new JMenu("Тесты");
-        testMenu.setMnemonic(KeyEvent.VK_T);
-        testMenu.getAccessibleContext().setAccessibleDescription(
-                "Тестовые команды");
-        
-        {
-            JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог", KeyEvent.VK_S);
-            addLogMessageItem.addActionListener((event) -> {
-                Logger.debug("Новая строка");
-            });
-            testMenu.add(addLogMessageItem);
-        }
-
-        JMenu exitMenu = new JMenu("Выход");
-        exitMenu.setMnemonic(KeyEvent.VK_Q);
-        exitMenu.getAccessibleContext().setAccessibleDescription(
-                "Выход");
-
-        {
-            JMenuItem exitApplication = new JMenuItem("Выход", KeyEvent.VK_Q);
-            exitApplication.addActionListener((event) -> {
-                exitApplication();
-            });
-            exitMenu.add(exitApplication);
-        }
         menuBar.add(lookAndFeelMenu);
         menuBar.add(testMenu);
         menuBar.add(exitMenu);
@@ -172,7 +145,7 @@ public class MainApplicationFrame extends JFrame
     }
     private void exitApplication()
     {
-        int option = JOptionPane.showConfirmDialog(desktopPane, "Exit", "exit", JOptionPane.YES_NO_OPTION);
+        int option = JOptionPane.showConfirmDialog(desktopPane, "Хотите выйти?", "Выход", JOptionPane.YES_NO_OPTION);
         if (option==0){
             System.exit(0);
         } else {
