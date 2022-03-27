@@ -2,9 +2,7 @@ package gui;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
@@ -103,10 +101,21 @@ public class MainApplicationFrame extends JFrame
 // 
 //        return menuBar;
 //    }
-    
+    private JMenu createMenu(String title, int keyEvent, String description) {
+        JMenu menu = new JMenu(title);
+        menu.setMnemonic(keyEvent);
+        menu.getAccessibleContext().setAccessibleDescription(description);
+        return menu;
+    }
+    private JMenuItem createSubmenu(String title, int keyEvent, ActionListener actionEvent){
+        JMenuItem submenu = new JMenuItem(title, keyEvent);
+        submenu.addActionListener(actionEvent);
+        return submenu;
+    }
     private JMenuBar generateMenuBar()
     {
         JMenuBar menuBar = new JMenuBar();
+
         
         JMenu lookAndFeelMenu = new JMenu("Режим отображения");
         lookAndFeelMenu.setMnemonic(KeyEvent.VK_V);
