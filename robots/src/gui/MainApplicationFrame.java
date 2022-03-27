@@ -135,11 +135,32 @@ public class MainApplicationFrame extends JFrame
             testMenu.add(addLogMessageItem);
         }
 
+        JMenu exitMenu = new JMenu("Выход");
+        exitMenu.setMnemonic(KeyEvent.VK_Q);
+        exitMenu.getAccessibleContext().setAccessibleDescription(
+                "Выход");
+
+        {
+            JMenuItem exitApplication = new JMenuItem("Выход", KeyEvent.VK_Q);
+            exitApplication.addActionListener((event) -> {
+                exitApplication();
+            });
+            exitMenu.add(exitApplication);
+        }
         menuBar.add(lookAndFeelMenu);
         menuBar.add(testMenu);
+        menuBar.add(exitMenu)
         return menuBar;
     }
-    
+    private void exitApplication()
+    {
+        int option = JOptionPane.showConfirmDialog(desktopPane, "Exit", "exit", JOptionPane.YES_NO_OPTION);
+        if (option==0){
+            System.exit(0);
+        } else {
+            Logger.debug("Отмена выхода");
+        }
+    }
     private void setLookAndFeel(String className)
     {
         try
