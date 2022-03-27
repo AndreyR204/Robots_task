@@ -12,6 +12,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.JOptionPane;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import log.Logger;
@@ -149,7 +150,7 @@ public class MainApplicationFrame extends JFrame
         }
         menuBar.add(lookAndFeelMenu);
         menuBar.add(testMenu);
-        menuBar.add(exitMenu)
+        menuBar.add(exitMenu);
         return menuBar;
     }
     private void exitApplication()
