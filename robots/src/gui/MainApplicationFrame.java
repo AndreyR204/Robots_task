@@ -17,6 +17,8 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import log.Logger;
 
+import gui.ConfigSaver;
+
 /**
  * Что требуется сделать:
  * 1. Метод создания меню перегружен функционалом и трудно читается. 
@@ -26,6 +28,7 @@ import log.Logger;
 public class MainApplicationFrame extends JFrame
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
+    private  ConfigSaver configSaver = new ConfigSaver();
     
     public MainApplicationFrame() {
         //Make the big window be indented 50 pixels from each edge
@@ -147,6 +150,7 @@ public class MainApplicationFrame extends JFrame
     {
         int option = JOptionPane.showConfirmDialog(desktopPane, "Хотите выйти?", "Выход", JOptionPane.YES_NO_OPTION);
         if (option==0){
+            this.configSaver.saveConfig();
             System.exit(0);
         } else {
             Logger.debug("Отмена выхода");
