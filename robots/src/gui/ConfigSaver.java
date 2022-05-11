@@ -12,12 +12,6 @@ public class ConfigSaver {
     private File file = new File(this.path);
     public ConfigSaver(){
         loadConfig();
-        this.properties.setProperty("test","t");
-        try {
-            this.properties.store(new FileWriter(this.file),null);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
     public Boolean loadConfig(){
         try {
