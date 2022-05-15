@@ -3,9 +3,6 @@ package gui;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.*;
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
-import java.util.List;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
@@ -42,13 +39,19 @@ public class MainApplicationFrame extends JFrame
             screenSize.height - inset*2);
 
         setContentPane(desktopPane);
+
+        configSaver.loadConfig();
         
         
         LogWindow logWindow = createLogWindow();
         addWindow(logWindow);
 
         GameWindow gameWindow = new GameWindow();
-        gameWindow.setSize(400,  400);
+        if (String.valueOf(configSaver.config).equals("{}")){
+            gameWindow.setSize(400,  400);
+        } else {
+            gameWindow.setSize(configSaver.getWindowWidth("game"), configSaver.getWindowHeight("game"));
+        }
         gameWindow.setName("game");
         addWindow(gameWindow);
 
@@ -60,17 +63,21 @@ public class MainApplicationFrame extends JFrame
                 exitApplication();
             }
         });
-        configSaver.loadConfig();
         Logger.debug(String.valueOf(configSaver.config));
     }
     
     protected LogWindow createLogWindow()
     {
         LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
-        logWindow.setLocation(10,10);
-        logWindow.setSize(300, 800);
+        if (String.valueOf(configSaver.config).equals("{}")){
+            logWindow.setLocation(10,10);
+            logWindow.setSize(300, 800);
+        } else {
+            logWindow.setLocation(configSaver.getWindowPositionX("log"),configSaver.getWindowPositionY("log"));
+            logWindow.setSize(configSaver.getWindowWidth("log"), configSaver.getWindowHeight("log"));
+        }
         setMinimumSize(logWindow.getSize());
-        logWindow.pack();
+        //logWindow.pack();
         Logger.debug("Протокол работает");
         logWindow.setName("log");
         return logWindow;
@@ -159,8 +166,10 @@ public class MainApplicationFrame extends JFrame
             for( JInternalFrame f : this.desktopPane.getAllFrames() ){
                 this.configSaver.setWindowHeight(f.getName(),f.getHeight());
                 this.configSaver.setWindowWidth(f.getName(),f.getWidth());
-                this.configSaver.saveConfig();
+                this.configSaver.setWindowPositionX(f.getName(), f.getLocation().x);
+                this.configSaver.setWindowPositionY(f.getName(), f.getLocation().y);
             }
+            this.configSaver.saveConfig();
             System.exit(0);
         } else {
             Logger.debug("Отмена выхода");

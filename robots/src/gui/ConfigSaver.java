@@ -39,19 +39,25 @@ public class ConfigSaver {
 
 
     public Integer getWindowHeight(String windowName){
-        String propertyName = windowName + "height";
-        return (Integer) this.properties.get(propertyName);
+        String propertyName = windowName + "_height";
+        return this.config.get(propertyName);
     }
 
     public Integer getWindowWidth(String windowName){
-        String propertyName = windowName + "width";
-        return (Integer) this.properties.get(propertyName);
+        String propertyName = windowName + "_width";
+        return this.config.get(propertyName);
     }
 
-    public Integer getWindowPosition(String windowName){
-        String propertyName = windowName + "position";
-        return (Integer) this.properties.get(propertyName);
+    public Integer getWindowPositionX(String windowName){
+        String propertyName = windowName + "_positionX";
+        return this.config.get(propertyName);
     }
+
+    public Integer getWindowPositionY(String windowName){
+        String propertyName = windowName + "_positionY";
+        return this.config.get(propertyName);
+    }
+
 
     public void setWindowHeight(String windowName, Integer height){
         String propertyName = windowName + "_height";
@@ -63,8 +69,12 @@ public class ConfigSaver {
         this.config.put(propertyName, width);
     }
 
-    public void setWindowPosition(String windowName, Integer position){
-        String propertyName = windowName + "position";
-        this.properties.setProperty(propertyName, String.valueOf(position));
+    public void setWindowPositionX(String windowName, Integer position){
+        String propertyName = windowName + "_positionX";
+        this.config.put(propertyName, position);
+    }
+    public void setWindowPositionY(String windowName, Integer position){
+        String propertyName = windowName + "_positionY";
+        this.config.put(propertyName, position);
     }
 }
