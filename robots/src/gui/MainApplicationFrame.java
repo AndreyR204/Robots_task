@@ -3,6 +3,7 @@ package gui;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.*;
+import java.awt.Component;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
@@ -17,7 +18,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import log.Logger;
 
-import gui.ConfigSaver;
 
 /**
  * Что требуется сделать:
@@ -150,6 +150,15 @@ public class MainApplicationFrame extends JFrame
     {
         int option = JOptionPane.showConfirmDialog(desktopPane, "Хотите выйти?", "Выход", JOptionPane.YES_NO_OPTION);
         if (option==0){
+            Component[] components = this.desktopPane.getComponents();
+            for (Component component : components) {
+                if (component.getClass().equals(JInternalFrame.class)) {
+                    this.configSaver.setWindowHeight(component.getName(),component.getHeight());
+                    this.configSaver.setWindowWidth(component.getName(),component.getWidth());
+                    this.configSaver.setWindowPositionX(component.getName(),component.getLocation().x);
+                    this.configSaver.setWindowPositionY(component.getName(),component.getLocation().y);
+                }
+            }
             this.configSaver.saveConfig();
             System.exit(0);
         } else {
