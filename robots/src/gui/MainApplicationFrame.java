@@ -5,6 +5,7 @@ import java.awt.Toolkit;
 import java.awt.event.*;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
+import java.util.List;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
@@ -29,6 +30,7 @@ import log.Logger;
 public class MainApplicationFrame extends JFrame
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
+    private final ConfigSaver configSaver = new ConfigSaver();
     
     public MainApplicationFrame() {
         //Make the big window be indented 50 pixels from each edge
@@ -47,6 +49,7 @@ public class MainApplicationFrame extends JFrame
 
         GameWindow gameWindow = new GameWindow();
         gameWindow.setSize(400,  400);
+        gameWindow.setName("game");
         addWindow(gameWindow);
 
         setJMenuBar(generateMenuBar());
@@ -57,6 +60,8 @@ public class MainApplicationFrame extends JFrame
                 exitApplication();
             }
         });
+        configSaver.loadConfig();
+        Logger.debug(String.valueOf(configSaver.config));
     }
     
     protected LogWindow createLogWindow()
@@ -67,6 +72,7 @@ public class MainApplicationFrame extends JFrame
         setMinimumSize(logWindow.getSize());
         logWindow.pack();
         Logger.debug("Протокол работает");
+        logWindow.setName("log");
         return logWindow;
     }
     
@@ -150,12 +156,10 @@ public class MainApplicationFrame extends JFrame
     {
         int option = JOptionPane.showConfirmDialog(desktopPane, "Хотите выйти?", "Выход", JOptionPane.YES_NO_OPTION);
         if (option==0){
-            try {
-                FileOutputStream outputStream = new FileOutputStream("test.txt");
-                ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-                objectOutputStream.writeObject(this.desktopPane);
-            } catch (java.io.IOException e){
-                e.printStackTrace();
+            for( JInternalFrame f : this.desktopPane.getAllFrames() ){
+                this.configSaver.setWindowHeight(f.getName(),f.getHeight());
+                this.configSaver.setWindowWidth(f.getName(),f.getWidth());
+                this.configSaver.saveConfig();
             }
             System.exit(0);
         } else {

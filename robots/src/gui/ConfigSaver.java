@@ -1,45 +1,42 @@
 package gui;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class ConfigSaver {
-    private String path = "Config.properties";
+    private String path = "test.txt";
     public Properties properties= new Properties();
-    private File file = new File(this.path);
+    public Map<String, Integer> config = new HashMap<String, Integer>();
     public ConfigSaver(){
-        loadConfig();
     }
     public Boolean loadConfig(){
         try {
-            this.properties.load(new FileReader(this.file));
+            FileInputStream fileInputStream = new FileInputStream(this.path);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+
+            this.config = (Map<String, Integer>) objectInputStream.readObject();
+
         } catch (IOException e) {
-            createConfig();
-            return false;
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
         return true;
     }
 
     public Boolean saveConfig(){
         try {
-            this.properties.store(new FileWriter(this.file),null);
+            FileOutputStream outputStream = new FileOutputStream(this.path);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+            objectOutputStream.writeObject(this.config);
         } catch (IOException e) {
-            createConfig();
-            return false;
+            e.printStackTrace();
         }
         return true;
     }
 
-    public void createConfig(){
-        try {
-            this.file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     public Integer getWindowHeight(String windowName){
         String propertyName = windowName + "height";
@@ -57,13 +54,13 @@ public class ConfigSaver {
     }
 
     public void setWindowHeight(String windowName, Integer height){
-        String propertyName = windowName + "height";
-        this.properties.setProperty(propertyName, String.valueOf(height));
+        String propertyName = windowName + "_height";
+        this.config.put(propertyName, height);
     }
 
     public void setWindowWidth(String windowName, Integer width){
-        String propertyName = windowName + "width";
-        this.properties.setProperty(propertyName, String.valueOf(width));
+        String propertyName = windowName + "_width";
+        this.config.put(propertyName, width);
     }
 
     public void setWindowPosition(String windowName, Integer position){
