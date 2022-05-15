@@ -3,6 +3,8 @@ package gui;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.*;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
@@ -17,7 +19,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import log.Logger;
 
-import gui.ConfigSaver;
 
 /**
  * Что требуется сделать:
@@ -28,7 +29,6 @@ import gui.ConfigSaver;
 public class MainApplicationFrame extends JFrame
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
-    private  ConfigSaver configSaver = new ConfigSaver();
     
     public MainApplicationFrame() {
         //Make the big window be indented 50 pixels from each edge
@@ -150,7 +150,13 @@ public class MainApplicationFrame extends JFrame
     {
         int option = JOptionPane.showConfirmDialog(desktopPane, "Хотите выйти?", "Выход", JOptionPane.YES_NO_OPTION);
         if (option==0){
-            this.configSaver.saveConfig();
+            try {
+                FileOutputStream outputStream = new FileOutputStream("test.txt");
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+                objectOutputStream.writeObject(this.desktopPane);
+            } catch (java.io.IOException e){
+                e.printStackTrace();
+            }
             System.exit(0);
         } else {
             Logger.debug("Отмена выхода");
