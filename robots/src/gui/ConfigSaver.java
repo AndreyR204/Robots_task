@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public class ConfigSaver {
-    private String path = "test.txt";
+    private String path = "config.txt";
     public Properties properties= new Properties();
     public Map<String, Integer> config = new HashMap<String, Integer>();
     public ConfigSaver(){
