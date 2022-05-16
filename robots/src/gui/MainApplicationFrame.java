@@ -3,6 +3,7 @@ package gui;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.*;
+import java.beans.PropertyVetoException;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
@@ -51,6 +52,11 @@ public class MainApplicationFrame extends JFrame
             gameWindow.setSize(400,  400);
         } else {
             gameWindow.setSize(configSaver.getWindowWidth("game"), configSaver.getWindowHeight("game"));
+            try {
+                gameWindow.setIcon(configSaver.getWindowCondition("game") != 1);
+            } catch (PropertyVetoException e) {
+                e.printStackTrace();
+            }
         }
         gameWindow.setName("game");
         addWindow(gameWindow);
@@ -75,6 +81,11 @@ public class MainApplicationFrame extends JFrame
         } else {
             logWindow.setLocation(configSaver.getWindowPositionX("log"),configSaver.getWindowPositionY("log"));
             logWindow.setSize(configSaver.getWindowWidth("log"), configSaver.getWindowHeight("log"));
+            try {
+                logWindow.setIcon(configSaver.getWindowCondition("log") != 1);
+            } catch (PropertyVetoException e) {
+                e.printStackTrace();
+            }
         }
         setMinimumSize(logWindow.getSize());
         //logWindow.pack();
@@ -168,6 +179,7 @@ public class MainApplicationFrame extends JFrame
                 this.configSaver.setWindowWidth(f.getName(),f.getWidth());
                 this.configSaver.setWindowPositionX(f.getName(), f.getLocation().x);
                 this.configSaver.setWindowPositionY(f.getName(), f.getLocation().y);
+                this.configSaver.setWindowCondition(f.getName(), (f.isIcon())?0:1);
             }
             this.configSaver.saveConfig();
             System.exit(0);

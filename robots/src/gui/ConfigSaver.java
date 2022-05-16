@@ -58,6 +58,11 @@ public class ConfigSaver {
         return this.config.get(propertyName);
     }
 
+    public Integer getWindowCondition(String windowName){
+        String propertyName = windowName + "_condition";
+        return this.config.get(propertyName);
+    }
+
 
     public void setWindowHeight(String windowName, Integer height){
         String propertyName = windowName + "_height";
@@ -76,5 +81,10 @@ public class ConfigSaver {
     public void setWindowPositionY(String windowName, Integer position){
         String propertyName = windowName + "_positionY";
         this.config.put(propertyName, position);
+    }
+
+    public void setWindowCondition(String windowName, Integer condition){
+        String propertyName = windowName + "_condition";
+        this.config.put(propertyName, condition);
     }
 }
