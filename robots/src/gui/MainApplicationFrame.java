@@ -41,7 +41,9 @@ public class MainApplicationFrame extends JFrame
 
         setContentPane(desktopPane);
 
-        configSaver.loadConfig();
+        if (!configSaver.loadConfig()){
+            JOptionPane.showMessageDialog(desktopPane, "Ошибка загрузки config", "Error", JOptionPane.ERROR_MESSAGE);
+        }
         
         
         LogWindow logWindow = createLogWindow();
@@ -51,9 +53,9 @@ public class MainApplicationFrame extends JFrame
         if (String.valueOf(configSaver.config).equals("{}")){
             gameWindow.setSize(400,  400);
         } else {
-            gameWindow.setSize(configSaver.getWindowWidth("game"), configSaver.getWindowHeight("game"));
+            gameWindow.setSize(configSaver.getWindowProperty("game", "width"), configSaver.getWindowProperty("game", "height"));
             try {
-                gameWindow.setIcon(configSaver.getWindowCondition("game") != 1);
+                gameWindow.setIcon(configSaver.getWindowProperty("game", "condition") != 1);
             } catch (PropertyVetoException e) {
                 e.printStackTrace();
             }
@@ -78,10 +80,10 @@ public class MainApplicationFrame extends JFrame
             logWindow.setLocation(10,10);
             logWindow.setSize(300, 800);
         } else {
-            logWindow.setLocation(configSaver.getWindowPositionX("log"),configSaver.getWindowPositionY("log"));
-            logWindow.setSize(configSaver.getWindowWidth("log"), configSaver.getWindowHeight("log"));
+            logWindow.setLocation(configSaver.getWindowProperty("log", "positionX"),configSaver.getWindowProperty("log", "positionY"));
+            logWindow.setSize(configSaver.getWindowProperty("log", "width"), configSaver.getWindowProperty("log", "height"));
             try {
-                logWindow.setIcon(configSaver.getWindowCondition("log") != 1);
+                logWindow.setIcon(configSaver.getWindowProperty("log", "condition") != 1);
             } catch (PropertyVetoException e) {
                 e.printStackTrace();
             }
@@ -174,11 +176,11 @@ public class MainApplicationFrame extends JFrame
         int option = JOptionPane.showConfirmDialog(desktopPane, "Хотите выйти?", "Выход", JOptionPane.YES_NO_OPTION);
         if (option==0){
             for( JInternalFrame f : this.desktopPane.getAllFrames() ){
-                this.configSaver.setWindowHeight(f.getName(),f.getHeight());
-                this.configSaver.setWindowWidth(f.getName(),f.getWidth());
-                this.configSaver.setWindowPositionX(f.getName(), f.getLocation().x);
-                this.configSaver.setWindowPositionY(f.getName(), f.getLocation().y);
-                this.configSaver.setWindowCondition(f.getName(), (f.isIcon())?0:1);
+                this.configSaver.setWindowProperty(f.getName(),f.getHeight(), "height");
+                this.configSaver.setWindowProperty(f.getName(),f.getWidth(), "width");
+                this.configSaver.setWindowProperty(f.getName(), f.getLocation().x, "positionX");
+                this.configSaver.setWindowProperty(f.getName(), f.getLocation().y, "positionY");
+                this.configSaver.setWindowProperty(f.getName(), (f.isIcon())?0:1, "condition");
             }
             this.configSaver.saveConfig();
             System.exit(0);
