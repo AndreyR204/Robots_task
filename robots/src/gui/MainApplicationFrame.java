@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.*;
 import java.beans.PropertyVetoException;
+import java.util.ArrayList;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
@@ -99,6 +100,17 @@ public class MainApplicationFrame extends JFrame
     {
         desktopPane.add(frame);
         frame.setVisible(true);
+    }
+
+    private void setWindow(JInternalFrame window){
+        String windowName = window.getName();
+        window.setLocation(configSaver.getWindowProperty(windowName, "positionX"),configSaver.getWindowProperty(windowName, "positionY"));
+        window.setSize(configSaver.getWindowProperty(windowName, "width"), configSaver.getWindowProperty(windowName, "height"));
+        try {
+            window.setIcon(configSaver.getWindowProperty(windowName, "condition") != 1);
+        } catch (PropertyVetoException e) {
+            e.printStackTrace();
+        }
     }
     
 //    protected JMenuBar createMenuBar() {
