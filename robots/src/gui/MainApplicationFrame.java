@@ -51,6 +51,7 @@ public class MainApplicationFrame extends JFrame
         addWindow(logWindow);
 
         GameWindow gameWindow = new GameWindow();
+        gameWindow.setName("game");
         if (String.valueOf(configSaver.config).equals("{}")){
             gameWindow.setSize(400,  400);
         } else {
@@ -61,7 +62,6 @@ public class MainApplicationFrame extends JFrame
                 e.printStackTrace();
             }
         }
-        gameWindow.setName("game");
         addWindow(gameWindow);
 
         setJMenuBar(generateMenuBar());
