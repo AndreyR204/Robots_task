@@ -3,6 +3,7 @@ package gui;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.*;
+import java.beans.PropertyVetoException;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
@@ -17,6 +18,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import log.Logger;
 
+
 /**
  * Что требуется сделать:
  * 1. Метод создания меню перегружен функционалом и трудно читается. 
@@ -26,6 +28,7 @@ import log.Logger;
 public class MainApplicationFrame extends JFrame
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
+    private final ConfigSaver configSaver = new ConfigSaver();
     
     public MainApplicationFrame() {
         //Make the big window be indented 50 pixels from each edge
@@ -37,13 +40,25 @@ public class MainApplicationFrame extends JFrame
             screenSize.height - inset*2);
 
         setContentPane(desktopPane);
+
+        configSaver.loadConfig();
         
         
         LogWindow logWindow = createLogWindow();
         addWindow(logWindow);
 
         GameWindow gameWindow = new GameWindow();
-        gameWindow.setSize(400,  400);
+        if (String.valueOf(configSaver.config).equals("{}")){
+            gameWindow.setSize(400,  400);
+        } else {
+            gameWindow.setSize(configSaver.getWindowWidth("game"), configSaver.getWindowHeight("game"));
+            try {
+                gameWindow.setIcon(configSaver.getWindowCondition("game") != 1);
+            } catch (PropertyVetoException e) {
+                e.printStackTrace();
+            }
+        }
+        gameWindow.setName("game");
         addWindow(gameWindow);
 
         setJMenuBar(generateMenuBar());
@@ -59,11 +74,22 @@ public class MainApplicationFrame extends JFrame
     protected LogWindow createLogWindow()
     {
         LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
-        logWindow.setLocation(10,10);
-        logWindow.setSize(300, 800);
+        if (String.valueOf(configSaver.config).equals("{}")){
+            logWindow.setLocation(10,10);
+            logWindow.setSize(300, 800);
+        } else {
+            logWindow.setLocation(configSaver.getWindowPositionX("log"),configSaver.getWindowPositionY("log"));
+            logWindow.setSize(configSaver.getWindowWidth("log"), configSaver.getWindowHeight("log"));
+            try {
+                logWindow.setIcon(configSaver.getWindowCondition("log") != 1);
+            } catch (PropertyVetoException e) {
+                e.printStackTrace();
+            }
+        }
         setMinimumSize(logWindow.getSize());
-        logWindow.pack();
+        //logWindow.pack();
         Logger.debug("Протокол работает");
+        logWindow.setName("log");
         return logWindow;
     }
     
@@ -147,6 +173,14 @@ public class MainApplicationFrame extends JFrame
     {
         int option = JOptionPane.showConfirmDialog(desktopPane, "Хотите выйти?", "Выход", JOptionPane.YES_NO_OPTION);
         if (option==0){
+            for( JInternalFrame f : this.desktopPane.getAllFrames() ){
+                this.configSaver.setWindowHeight(f.getName(),f.getHeight());
+                this.configSaver.setWindowWidth(f.getName(),f.getWidth());
+                this.configSaver.setWindowPositionX(f.getName(), f.getLocation().x);
+                this.configSaver.setWindowPositionY(f.getName(), f.getLocation().y);
+                this.configSaver.setWindowCondition(f.getName(), (f.isIcon())?0:1);
+            }
+            this.configSaver.saveConfig();
             System.exit(0);
         } else {
             Logger.debug("Отмена выхода");
