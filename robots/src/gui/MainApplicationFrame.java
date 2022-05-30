@@ -30,37 +30,34 @@ public class MainApplicationFrame extends JFrame
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
     private final ConfigSaver configSaver = new ConfigSaver();
+    private Boolean config = false;
     
     public MainApplicationFrame() {
-        //Make the big window be indented 50 pixels from each edge
-        //of the screen.
-        int inset = 50;        
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds(inset, inset,
-            screenSize.width  - inset*2,
-            screenSize.height - inset*2);
-
-        setContentPane(desktopPane);
-
-        if (!configSaver.loadConfig()){
+        setName("main");
+        this.config = configSaver.loadConfig();
+        if (!config){
             JOptionPane.showMessageDialog(desktopPane, "Ошибка загрузки config", "Error", JOptionPane.ERROR_MESSAGE);
         }
-        
+        if (!config) {
+            int inset = 50;
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            setBounds(inset, inset,
+                    screenSize.width - inset * 2,
+                    screenSize.height - inset * 2);
+        } else {
+            setBounds(configSaver.getWindowProperty(this.getName(), "X"),configSaver.getWindowProperty(this.getName(), "Y"), configSaver.getWindowProperty(this.getName(), "width"), configSaver.getWindowProperty(this.getName(), "height"));
+        }
+        setContentPane(desktopPane);
         
         LogWindow logWindow = createLogWindow();
         addWindow(logWindow);
 
         GameWindow gameWindow = new GameWindow();
         gameWindow.setName("game");
-        if (String.valueOf(configSaver.config).equals("{}")){
+        if (!this.config){
             gameWindow.setSize(400,  400);
         } else {
-            gameWindow.setSize(configSaver.getWindowProperty("game", "width"), configSaver.getWindowProperty("game", "height"));
-            try {
-                gameWindow.setIcon(configSaver.getWindowProperty("game", "condition") != 1);
-            } catch (PropertyVetoException e) {
-                e.printStackTrace();
-            }
+            this.setWindow(gameWindow);
         }
         addWindow(gameWindow);
 
@@ -72,27 +69,22 @@ public class MainApplicationFrame extends JFrame
                 exitApplication();
             }
         });
+        Logger.debug(String.valueOf(this.configSaver.config));
     }
     
     protected LogWindow createLogWindow()
     {
         LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
-        if (String.valueOf(configSaver.config).equals("{}")){
+        logWindow.setName("log");
+        if (!this.config){
             logWindow.setLocation(10,10);
             logWindow.setSize(300, 800);
         } else {
-            logWindow.setLocation(configSaver.getWindowProperty("log", "positionX"),configSaver.getWindowProperty("log", "positionY"));
-            logWindow.setSize(configSaver.getWindowProperty("log", "width"), configSaver.getWindowProperty("log", "height"));
-            try {
-                logWindow.setIcon(configSaver.getWindowProperty("log", "condition") != 1);
-            } catch (PropertyVetoException e) {
-                e.printStackTrace();
-            }
+            this.setWindow(logWindow);
         }
         setMinimumSize(logWindow.getSize());
         //logWindow.pack();
         Logger.debug("Протокол работает");
-        logWindow.setName("log");
         return logWindow;
     }
     
@@ -194,6 +186,11 @@ public class MainApplicationFrame extends JFrame
                 this.configSaver.setWindowProperty(f.getName(), f.getLocation().y, "positionY");
                 this.configSaver.setWindowProperty(f.getName(), (f.isIcon())?0:1, "condition");
             }
+            this.configSaver.setWindowProperty("main", getBounds().x, "X");
+            this.configSaver.setWindowProperty("main", getBounds().y, "Y");
+            this.configSaver.setWindowProperty("main", getBounds().width, "width");
+            this.configSaver.setWindowProperty("main", getBounds().height, "height");
+
             this.configSaver.saveConfig();
             System.exit(0);
         } else {
