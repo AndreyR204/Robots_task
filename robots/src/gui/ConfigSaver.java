@@ -8,7 +8,9 @@ import java.util.Properties;
 public class ConfigSaver {
     private String path = System.getProperty("user.home") + "\\" + "config.txt";
     public Map<String, Integer> config = new HashMap<String, Integer>();
+    public Boolean loaded;
     public ConfigSaver(){
+        this.loaded = loadConfig();
     }
     public Boolean loadConfig(){
         try {

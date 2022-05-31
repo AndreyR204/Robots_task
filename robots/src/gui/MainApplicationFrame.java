@@ -5,6 +5,8 @@ import java.awt.Toolkit;
 import java.awt.event.*;
 import java.beans.PropertyVetoException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
@@ -30,23 +32,15 @@ public class MainApplicationFrame extends JFrame
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
     private final ConfigSaver configSaver = new ConfigSaver();
-    private Boolean config = false;
     
     public MainApplicationFrame() {
         setName("main");
-        this.config = configSaver.loadConfig();
-        if (!config){
+        if (!this.configSaver.loaded){
             JOptionPane.showMessageDialog(desktopPane, "Ошибка загрузки config", "Error", JOptionPane.ERROR_MESSAGE);
         }
-        if (!config) {
-            int inset = 50;
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            setBounds(inset, inset,
-                    screenSize.width - inset * 2,
-                    screenSize.height - inset * 2);
-        } else {
-            setBounds(configSaver.getWindowProperty(this.getName(), "X"),configSaver.getWindowProperty(this.getName(), "Y"), configSaver.getWindowProperty(this.getName(), "width"), configSaver.getWindowProperty(this.getName(), "height"));
-        }
+            setBounds(configSaver.getWindowProperty(this.getName(), "X", 50),configSaver.getWindowProperty(this.getName(), "Y", 50), configSaver.getWindowProperty(this.getName(), "width", screenSize.width - 100), configSaver.getWindowProperty(this.getName(), "height", screenSize.height - 100));
+
         setContentPane(desktopPane);
         
         LogWindow logWindow = createLogWindow();
@@ -54,11 +48,13 @@ public class MainApplicationFrame extends JFrame
 
         GameWindow gameWindow = new GameWindow();
         gameWindow.setName("game");
-        if (!this.config){
-            gameWindow.setSize(400,  400);
-        } else {
-            this.setWindow(gameWindow);
-        }
+        Map<String, Integer> defaultConfig = new HashMap<String, Integer>();
+        defaultConfig.put("positionX", 0);
+        defaultConfig.put("positionY", 0);
+        defaultConfig.put("width", 400);
+        defaultConfig.put("height", 400);
+        defaultConfig.put("condition", 1);
+        this.setWindow(gameWindow, defaultConfig);
         addWindow(gameWindow);
 
         setJMenuBar(generateMenuBar());
@@ -75,12 +71,13 @@ public class MainApplicationFrame extends JFrame
     {
         LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
         logWindow.setName("log");
-        if (!this.config){
-            logWindow.setLocation(10,10);
-            logWindow.setSize(300, 800);
-        } else {
-            this.setWindow(logWindow);
-        }
+        Map<String, Integer> defaultConfig = new HashMap<String, Integer>();
+        defaultConfig.put("positionX", 10);
+        defaultConfig.put("positionY", 10);
+        defaultConfig.put("width", 300);
+        defaultConfig.put("height", 800);
+        defaultConfig.put("condition", 1);
+        this.setWindow(logWindow, defaultConfig);
         setMinimumSize(logWindow.getSize());
         //logWindow.pack();
         Logger.debug("Протокол работает");
@@ -93,12 +90,12 @@ public class MainApplicationFrame extends JFrame
         frame.setVisible(true);
     }
 
-    private void setWindow(JInternalFrame window){
+    private void setWindow(JInternalFrame window, Map<String, Integer> defaultConfig){
         String windowName = window.getName();
-        window.setLocation(configSaver.getWindowProperty(windowName, "positionX"),configSaver.getWindowProperty(windowName, "positionY"));
-        window.setSize(configSaver.getWindowProperty(windowName, "width"), configSaver.getWindowProperty(windowName, "height"));
+        window.setLocation(configSaver.getWindowProperty(windowName, "positionX", defaultConfig.get("positionX")),configSaver.getWindowProperty(windowName, "positionY",  defaultConfig.get("positionY")));
+        window.setSize(configSaver.getWindowProperty(windowName, "width", defaultConfig.get("width")), configSaver.getWindowProperty(windowName, "height", defaultConfig.get("height")));
         try {
-            window.setIcon(configSaver.getWindowProperty(windowName, "condition") != 1);
+            window.setIcon(configSaver.getWindowProperty(windowName, "condition", defaultConfig.get("condition")) != 1);
         } catch (PropertyVetoException e) {
             e.printStackTrace();
         }
