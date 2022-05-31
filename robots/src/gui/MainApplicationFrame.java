@@ -69,7 +69,6 @@ public class MainApplicationFrame extends JFrame
                 exitApplication();
             }
         });
-        Logger.debug(String.valueOf(this.configSaver.config));
     }
     
     protected LogWindow createLogWindow()

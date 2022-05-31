@@ -37,9 +37,13 @@ public class ConfigSaver {
     }
 
 
-    public Integer getWindowProperty(String windowName, String property){
+    public Integer getWindowProperty(String windowName, String property, Integer defaultValue){
         String propertyName = windowName + "_" + property;
-        return this.config.get(propertyName);
+        if (this.config.get(propertyName) == null){
+            return defaultValue;
+        } else{
+            return this.config.get(propertyName);
+        }
     }
 
 
