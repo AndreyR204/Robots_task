@@ -54,14 +54,5 @@ public class ConfigSaver {
         this.config.put(propertyName, value);
     }
 
-    public Boolean checkWindowProperty(String windowName, String property){
-        String propertyName = windowName + "_" + property;
-        try {
-            this.config.get(propertyName);
-            return true;
-        } catch (Exception e){
-            return false;
-        }
-    }
 
 }
