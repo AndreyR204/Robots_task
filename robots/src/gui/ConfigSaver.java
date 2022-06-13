@@ -8,7 +8,9 @@ import java.util.Properties;
 public class ConfigSaver {
     private String path = System.getProperty("user.home") + "\\" + "config.txt";
     public Map<String, Integer> config = new HashMap<String, Integer>();
+    public Boolean loaded;
     public ConfigSaver(){
+        this.loaded = loadConfig();
     }
     public Boolean loadConfig(){
         try {
@@ -18,9 +20,9 @@ public class ConfigSaver {
             this.config = (Map<String, Integer>) objectInputStream.readObject();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            return false;
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            return false;
         }
         return true;
     }
@@ -37,53 +39,16 @@ public class ConfigSaver {
     }
 
 
-    public Integer getWindowHeight(String windowName){
-        String propertyName = windowName + "_height";
-        return this.config.get(propertyName);
-    }
-
-    public Integer getWindowWidth(String windowName){
-        String propertyName = windowName + "_width";
-        return this.config.get(propertyName);
-    }
-
-    public Integer getWindowPositionX(String windowName){
-        String propertyName = windowName + "_positionX";
-        return this.config.get(propertyName);
-    }
-
-    public Integer getWindowPositionY(String windowName){
-        String propertyName = windowName + "_positionY";
-        return this.config.get(propertyName);
-    }
-
-    public Integer getWindowCondition(String windowName){
-        String propertyName = windowName + "_condition";
-        return this.config.get(propertyName);
+    public Integer getWindowProperty(String windowName, String property, Integer defaultValue){
+        String propertyName = windowName + "_" + property;
+        return this.config.getOrDefault(propertyName, defaultValue);
     }
 
 
-    public void setWindowHeight(String windowName, Integer height){
-        String propertyName = windowName + "_height";
-        this.config.put(propertyName, height);
+    public void setWindowProperty(String windowName, Integer value, String property){
+        String propertyName = windowName + "_" + property;
+        this.config.put(propertyName, value);
     }
 
-    public void setWindowWidth(String windowName, Integer width){
-        String propertyName = windowName + "_width";
-        this.config.put(propertyName, width);
-    }
 
-    public void setWindowPositionX(String windowName, Integer position){
-        String propertyName = windowName + "_positionX";
-        this.config.put(propertyName, position);
-    }
-    public void setWindowPositionY(String windowName, Integer position){
-        String propertyName = windowName + "_positionY";
-        this.config.put(propertyName, position);
-    }
-
-    public void setWindowCondition(String windowName, Integer condition){
-        String propertyName = windowName + "_condition";
-        this.config.put(propertyName, condition);
-    }
 }
